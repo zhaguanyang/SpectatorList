@@ -12,7 +12,7 @@ namespace SpectatorList
     {
         public override string Name { get; } = "SpectatorList";
         public override string Author { get; } = "TTypiarz";
-        public override Version Version { get; } = new Version(1, 1, 3);
+        public override Version Version { get; } = new Version(1, 1, 4);
 
         public override void OnEnabled()
         {
@@ -28,8 +28,10 @@ namespace SpectatorList
             base.OnDisabled();
         }
 
-        private void Player_Joined(PlayerJoinEvent ev) =>
-    Timing.RunCoroutine(SpectatorList(ev.Player).CancelWith(ev.Player.GameObject));
+        private void Player_Joined(PlayerJoinEvent ev)
+        {
+            Timing.RunCoroutine(SpectatorList(ev.Player).CancelWith(ev.Player.GameObject));
+        }
 
         private IEnumerator<float> SpectatorList(Player player)
         {
@@ -45,7 +47,7 @@ namespace SpectatorList
 
                 foreach (ReferenceHub refhub in player.ReferenceHub.spectatorManager.ServerCurrentSpectatingPlayers)
                 {
-                    Player splayer = Player.Get(refhub.gameObject);
+                    Player splayer = Player.Get(refhub.playerId);
 
                     if (splayer == player || splayer.IsGlobalModerator ||
                         splayer.Overwatch && Config.IgnoreOverwatch ||
@@ -60,7 +62,7 @@ namespace SpectatorList
                 if (count > 0)
                     player.ShowHint(
                         StringBuilderPool.Shared.ToStringReturn(list).Replace("(COUNT)", $"{count}")
-                            .Replace("(COLOR)", $"{CharacterClassManager._staticClasses.Get(player.Role).classColor.ToHex()}"), 1.2f);
+                            .Replace("(COLOR)", "#FFFF00"), 1.2f);
                 else StringBuilderPool.Shared.Return(list);
             }
         }
